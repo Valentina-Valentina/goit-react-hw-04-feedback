@@ -1,42 +1,38 @@
-import React, { Component } from 'react';
+import {useState } from 'react';
 import { Container } from './App.styled';
 import { Section } from '../Section/Section';
 import { FeedbackOptions } from '../FeedbackOptions/FeedbackOptions';
 import { Statistics } from '../Statistics/Statistics';
 import { Notification } from '../Notification/Notification';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  onLeaveFeedback = state => {
-    this.setState(prevState => ({ [state]: prevState[state] + 1 }));
-  };
+  const options = ['good', 'neutral', 'bad'];
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-    return good + neutral + bad;
-  };
+  function onLeaveFeedback(option) {
+    switch (option) {
+      case 'good':
+        return setGood(good + 1);
+      case 'neutral':
+        return setNeutral(neutral + 1);
+      case 'bad':
+        return setBad(bad + 1);
+      default:
+        throw new Error('There is no such option!');
+    }
+  }
 
-  countPositiveFeedbackPercentage = () => {
-    const { good } = this.state;
-    const total = this.countTotalFeedback();
-    return Math.round((good / total) * 100) || 0;
-  };
-
-  render() {
-    const { good, neutral, bad } = this.state;
-    const options = Object.keys(this.state);
-    const totalFeedback = this.countTotalFeedback();
-    const totalPercentage = this.countPositiveFeedbackPercentage();
-    return (
+  const totalFeedback = good + neutral + bad;
+  const totalPercentage = Math.round((good / totalFeedback) * 100);
+ 
+  return (
       <Container>
         <Section title="Please leave feedback">
           <FeedbackOptions
-            onLeaveFeedback={this.onLeaveFeedback}
+            onLeaveFeedback={onLeaveFeedback}
             options={options}
           />
         </Section>
@@ -54,6 +50,5 @@ export class App extends Component {
           )}
         </Section>
       </Container>
-    );
-  }
-}
+  );
+};
